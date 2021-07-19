@@ -22,9 +22,6 @@ This is research code, expect that it changes often and any fitness for a partic
 [![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
 
 
-![Example image](doc/example.jpg)
-
-
 ### Publications
 
 If you use this work in an academic context, please cite the following publication(s):
@@ -183,7 +180,7 @@ Reads temperature measurements and computed the average.
 
 ## Bugs & Feature Requests
 
-Please report bugs and request features using the [Issue Tracker](https://github.com/ethz-asl/ros_best_practices/issues).
+Please report bugs and request features using the [Issue Tracker](https://gitlab.com/jeferson.lima/diff_drive_controller/-/issues).
 
 # References
 
