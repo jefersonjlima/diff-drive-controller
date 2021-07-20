@@ -1,22 +1,22 @@
 # Differential Drive Controller Configurations
 
-cmd_vel_publisher: "None"
-odometry_subscriber: "None"
+cmd_vel_publisher: "/cmd_vel"
+odometry_subscriber: "/odom"
 
 pid_velocity_controller_gain:
-  p: 0
-  i: 0
-  d: 0
+  p: 0.0
+  i: 0.0
+  d: 0.0
 
-# Velocity and acceleration limits
-# Whenever a min_* is unspecified, default to -max_*
+# Turtlebot3 Burger parameters 
 limits:
   linear:
     x:
-      max_velocity           : 1.1   # m/s
-      max_acceleration       : 2.0   # m/s^2
+      max_velocity           : 0.2   # m/s
   angular:
     z:
-      max_velocity           : 1.1   # rad/s
-      max_acceleration       : 3.0   # rad/s^2
+      max_velocity           : 2.84   # rad/s
 
+target_pose:
+  x: 2.0
+  y: 3.3
