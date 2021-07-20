@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+	<node pkg="diff_drive_controller" type="controller_node" name="controller_node" output="screen" clear_params="true">
+		<rosparam command="load" file="$(find diff_drive_controller)/config/control.yaml" />
+	</node>
+
+
+</launch>
