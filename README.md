@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a template: replace, remove, and add where required. Describe here what this package does and what it's meant for in a few sentences.
+ROS package for an PID and LQR controller on the differential drive robots.
 
 **Keywords:** Controller, Turtlebot3, Example
 
@@ -14,7 +14,7 @@ The source code is released under a [BSD 3-Clause license](ros_package_template/
 Affiliation: [UTFPR](https://www.utfpr.edu.br)<br />
 Maintainer: Jeferson Lima, jefersonlima@utfpr.edu.br**
 
-The DIFFERENTIAL_DRIVE_CONTROLLER package has been tested under [ROS] Noetic on respectively Ubuntu 20.04.
+The `DIFF_DRIVE_CONTROLLER`package has been tested under [ROS](http://wiki.ros.org) Noetic on respectively [Ubuntu 20.04 LTS](https://releases.ubuntu.com/20.04/).
 This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
 
 ![](./images/demo.png)
