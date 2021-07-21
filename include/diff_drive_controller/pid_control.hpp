@@ -3,6 +3,7 @@
 #define DEBUG
 
 #include <ros/ros.h>
+#include <std_msgs/Float64.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
 #include <tf/transform_datatypes.h>
@@ -17,6 +18,7 @@ typedef struct
   double p_x, i_x, d_x;
   double p_yaw, i_yaw, d_yaw;
   double x_max_vel, yaw_max_vel;
+  double dist_error, angle_error;
 } PID;
 
 typedef struct
@@ -27,7 +29,6 @@ typedef struct
 
 
 class PID_Control{
-
   public:
 
     PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh);
@@ -42,7 +43,7 @@ class PID_Control{
     void initGoal();
 
     /*---ROS Topics-------------------*/
-    ros::Publisher _cmd_pub;
+    ros::Publisher _cmd_pub, _edist_pub, _eangle_pub;
     ros::Subscriber _odom_sub;
     ros::NodeHandle _node;
     ros::ServiceClient _spawn, _dspawn;

@@ -12,7 +12,7 @@ int main(int argc, char** argv)
   // reset simulation
   pid.resetGazebo();
 
-  ros::Rate loop_rate(10); //10Hz
+  ros::Rate loop_rate(5); //5Hz
 
   do
   {

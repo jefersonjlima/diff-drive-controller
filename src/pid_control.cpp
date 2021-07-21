@@ -29,6 +29,10 @@ PID_Control::PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh)
   /*---ROS Topics Init--------------*/
   _odom_sub = node.subscribe(_odometry_subscriber, 1, &PID_Control::odomCallback, this);
   _cmd_pub = node.advertise<geometry_msgs::Twist>(_cmd_vel_publisher, 10);
+  _edist_pub = node.advertise<std_msgs::Float64>("/dist_error", 10);
+  _eangle_pub = node.advertise<std_msgs::Float64>("/angle_error", 10);
+
+  /*---ROS Services-----------------*/
   ros::service::waitForService("gazebo/spawn_sdf_model");
   _spawn = node.serviceClient<gazebo_msgs::SpawnModel>("gazebo/spawn_sdf_model");
   _dspawn = node.serviceClient<gazebo_msgs::DeleteModel>("gazebo/delete_model");
@@ -132,9 +136,9 @@ double PID_Control::calculateTargetDistance(const Orientation& pose, const Orien
 
 double PID_Control::linearControl(const Orientation& pose, const Orientation& target)
 {
-  double distance, out_control;
-  distance = calculateTargetDistance(_pose, _target);
-  out_control = _pid.p_x * distance;
+  double out_control;
+  _pid.dist_error = calculateTargetDistance(_pose, _target);
+  out_control = _pid.p_x * _pid.dist_error;
   if (out_control > _pid.x_max_vel)
   {
     out_control = _pid.x_max_vel;
@@ -149,7 +153,8 @@ double PID_Control::angularControl(const Orientation& pose, const Orientation& t
 
   goal_angle = atan2(target.y - pose.y, target.x - pose.x);
 
-  out_control = _pid.p_yaw * (goal_angle - _pose.yaw);
+  _pid.angle_error = (goal_angle - _pose.yaw);
+  out_control = _pid.p_yaw * _pid.angle_error;
   if (abs(out_control) > _pid.yaw_max_vel)
   {
     if (out_control < 0)
@@ -166,6 +171,7 @@ double PID_Control::angularControl(const Orientation& pose, const Orientation& t
 bool PID_Control::moveTarget()
 {
   geometry_msgs::Twist cmd_vel;
+  std_msgs::Float64 error;
   auto target_tol = calculateTargetDistance(_pose, _target);
 
   if ((target_tol > 0.01))
@@ -174,6 +180,10 @@ bool PID_Control::moveTarget()
   cmd_vel.angular.z = angularControl(_pose, _target);
 
   _cmd_pub.publish(cmd_vel);
+  error.data = _pid.dist_error;
+  _edist_pub.publish(error);
+  error.data = _pid.angle_error;
+  _eangle_pub.publish(error);
   }
   else
     {
