@@ -9,7 +9,7 @@ pid_velocity_controller_gain:
     i: 0.0
     d: 0.0
   angular:
-    p: 1.0
+    p: 3.0
     i: 0.0
     d: 0.0
 
@@ -23,7 +23,7 @@ limits:
       max_velocity           : 2.84   # rad/s
 
 target_pose:
-  x: 2.0
-  y: 4.0
+  x: -2.0
+  y: 2.0
 
 
