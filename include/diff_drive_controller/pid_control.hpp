@@ -8,7 +8,9 @@
 #include <tf/transform_datatypes.h>
 #include <std_srvs/Empty.h>
 #include <gazebo_msgs/SpawnModel.h>
+#include <gazebo_msgs/DeleteModel.h>
 #include <fstream>
+
 
 typedef struct
 {
@@ -29,13 +31,13 @@ class PID_Control{
   public:
 
     PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh);
-    ~PID_Control(){ _node.shutdown();};
+    ~PID_Control();
 
     void resetGazebo();
     double calculateTargetDistance(const Orientation& pose, const Orientation& target);
     double linearControl(const Orientation& pose, const Orientation& target);
     double angularControl(const Orientation& pose, const Orientation& target);
-    void moveTarget();
+    bool moveTarget();
   private:
     void initGoal();
 
@@ -43,7 +45,7 @@ class PID_Control{
     ros::Publisher _cmd_pub;
     ros::Subscriber _odom_sub;
     ros::NodeHandle _node;
-    ros::ServiceClient _spawn;
+    ros::ServiceClient _spawn, _dspawn;
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& msg);
 
@@ -57,6 +59,5 @@ class PID_Control{
     bool _move;
 
 };
-
 
 #endif

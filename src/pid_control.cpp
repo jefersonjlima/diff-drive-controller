@@ -1,14 +1,18 @@
 
 #include "diff_drive_controller/pid_control.hpp"
 
+
 PID_Control::PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh)
 {
   /*---Load Params------------------*/
   std::string model_path;
   private_nh.param<std::string>("cmd_vel_publisher",   _cmd_vel_publisher,   "/cmd_vel");
   private_nh.param<std::string>("odometry_subscriber", _odometry_subscriber, "/odom");
-  private_nh.param<std::string>("goal_marker", model_path, "");
+  private_nh.param<std::string>("goal_box", model_path, "");
 
+#ifdef DEBUG
+  ROS_INFO("Model Path: %s", model_path.c_str());
+#endif
 
   private_nh.param("pid_velocity_controller_gain/linear/p", _pid.p_x, 1.5);
   private_nh.param("pid_velocity_controller_gain/linear/i", _pid.i_x, 0.0);
@@ -25,9 +29,9 @@ PID_Control::PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh)
   /*---ROS Topics Init--------------*/
   _odom_sub = node.subscribe(_odometry_subscriber, 1, &PID_Control::odomCallback, this);
   _cmd_pub = node.advertise<geometry_msgs::Twist>(_cmd_vel_publisher, 10);
-
   ros::service::waitForService("gazebo/spawn_sdf_model");
   _spawn = node.serviceClient<gazebo_msgs::SpawnModel>("gazebo/spawn_sdf_model");
+  _dspawn = node.serviceClient<gazebo_msgs::DeleteModel>("gazebo/delete_model");
 
   /*---Load Goal Marker-------------*/
   std::ifstream f_model(model_path);
@@ -36,7 +40,7 @@ PID_Control::PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh)
   _visual_target.request.model_xml = model;
   initGoal();
 
-  _move = false;
+  _move = true;
   _node = node;
 
 #ifdef DEBUG
@@ -55,6 +59,26 @@ PID_Control::PID_Control(ros::NodeHandle node, ros::NodeHandle private_nh)
   ROS_INFO("target_pose/x: %f", _target.x);
   ROS_INFO("target_pose/y: %f", _target.y);
 #endif
+}
+
+PID_Control::~PID_Control()
+{
+  geometry_msgs::Twist cmd_vel;
+
+  // stop robot
+  cmd_vel.linear.x = 0.0;
+  cmd_vel.angular.z = 0.0;
+  _cmd_pub.publish(cmd_vel);
+
+  // delete goal
+  gazebo_msgs::DeleteModel deleteSrv;
+  deleteSrv.request.model_name = "goal";
+
+  bool result = false;
+  _dspawn.call(deleteSrv);
+
+  ROS_INFO("Closing Controller_node!");
+  _node.shutdown();
 }
 
 
@@ -96,8 +120,6 @@ void PID_Control::odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
   _pose.x = msg->pose.pose.position.x;
   _pose.y = msg->pose.pose.position.y;
   _pose.yaw = yaw;
-
-  _move = true;
 }
 
 
@@ -141,12 +163,12 @@ double PID_Control::angularControl(const Orientation& pose, const Orientation& t
 }
 
 
-void PID_Control::moveTarget()
+bool PID_Control::moveTarget()
 {
   geometry_msgs::Twist cmd_vel;
   auto target_tol = calculateTargetDistance(_pose, _target);
 
-  if (_move && (target_tol > 0.01))
+  if ((target_tol > 0.01))
   {
   cmd_vel.linear.x = linearControl(_pose, _target);
   cmd_vel.angular.z = angularControl(_pose, _target);
@@ -168,4 +190,5 @@ void PID_Control::moveTarget()
   auto ctrl_ang = angularControl(_pose, _target);
   ROS_INFO("Control Output: Linear %.2f,  Angular %.2f",ctrl_lin, ctrl_ang);
 #endif
+  return _move;
 }

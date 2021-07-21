@@ -1,7 +1,6 @@
 
 #include "diff_drive_controller/pid_control.hpp"
 
-Orientation test;
 
 int main(int argc, char** argv)
 {
@@ -10,16 +9,17 @@ int main(int argc, char** argv)
   ros::NodeHandle private_nh("~");
 
   PID_Control pid(node, private_nh);
+  // reset simulation
   pid.resetGazebo();
 
-  ros::Rate loop_rate(10); //5Hz
+  ros::Rate loop_rate(10); //10Hz
 
-  while(ros::ok())
+  do
   {
-    pid.moveTarget();
     ros::spinOnce();
     loop_rate.sleep();
-  }
+  }while(ros::ok() && pid.moveTarget());
+
 
   return 0;
 }
