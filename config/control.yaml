@@ -24,7 +24,6 @@ limits:
 
 target_pose:
   x: 2.0
-  y: 2.0
+  y: 4.0
 
-# fix it
-goal_marker: "/home/jeferson/ROS/class_ws/src/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_square/goal_box/model.sdf"
+
