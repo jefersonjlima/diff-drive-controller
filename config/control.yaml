@@ -4,19 +4,27 @@ cmd_vel_publisher: "/cmd_vel"
 odometry_subscriber: "/odom"
 
 pid_velocity_controller_gain:
-  p: 0.0
-  i: 0.0
-  d: 0.0
+  linear:
+    p: 1.5
+    i: 0.0
+    d: 0.0
+  angular:
+    p: 1.0
+    i: 0.0
+    d: 0.0
 
 # Turtlebot3 Burger parameters 
 limits:
   linear:
     x:
-      max_velocity           : 0.2   # m/s
+      max_velocity           : 0.22  # m/s
   angular:
-    z:
+    yaw:
       max_velocity           : 2.84   # rad/s
 
 target_pose:
   x: 2.0
-  y: 3.3
+  y: 2.0
+
+# fix it
+goal_marker: "/home/jeferson/ROS/class_ws/src/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_square/goal_box/model.sdf"
