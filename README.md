@@ -4,7 +4,7 @@
 
 ROS package for an PID and LQR controller on the differential drive robots.
 
-**Keywords:** Controller, Turtlebot3, Example
+**Keywords:** Controller, Turtlebot3, Example Class
 
 ### License
 
